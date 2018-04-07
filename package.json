@@ -1,0 +1,27 @@
+{
+  "name": "timesheet-overtime",
+  "version": "0.1.0",
+  "description": "Process csv files from Timesheet to calculate overtime.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Andreas Voigt",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^2.14.1",
+    "csv-parse": "^2.0.4",
+    "moment": "^2.20.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andreasvoigt/timesheet-overtime",
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "homepage": "https://github.com/andreasvoigt/timesheet-overtime",
+  "devDependencies": {
+    "eslint": "^4.18.1"
+  }
+}
