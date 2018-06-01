@@ -75,7 +75,7 @@ function calculateTotalOvertime(overtimes) {
     return totalOvertime;
 }
 
-function getOvertimeForFile(file) {
+function getOvertimeForFile(file, verbose) {
     return new Promise((resolve, reject) => {
         let parser = csvParser({delimiter: ";"}, (err, data) => {
             if (err) {
@@ -95,12 +95,18 @@ function getOvertimeForFile(file) {
             resolve(calculateTotalOvertime(overtimes));
         });
         
-        console.log(file);
         fs.createReadStream(file).pipe(parser);
+    }).then((result) => {
+        console.log(`# ${file}`);
+        if (verbose) {
+            console.log(`  Overtime for this file: ${result.as("minutes")}(min), ${result.as("hours")}(h)`);
+        }
+
+        return result;
     });
 }
 
-function getOvertimeForDirectory(directory) {
+function getOvertimeForDirectory(directory, verbose) {
     return new Promise((resolve, reject) => {
         let filter = /\.csv$/,
             dir = path.normalize(directory);
@@ -123,7 +129,7 @@ function getOvertimeForDirectory(directory) {
     }).then((files) => {
         return files.reduce((promise, item) => {
             return promise.then((totalDuration) => {
-                return getOvertimeForFile(item)
+                return getOvertimeForFile(item, verbose)
                     .then((duration) => {
                         return totalDuration.add(duration);
                     });

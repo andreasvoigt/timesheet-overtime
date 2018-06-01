@@ -11,6 +11,7 @@ program
     .usage("[options] <file>")
     .option("-d, --directory", "select directory")
     .option("-f, --file", "select file")
+    .option("--verbose", "print detailed information for each file")
     .action((selectedFile) => {
         file = selectedFile;
     })
@@ -18,10 +19,11 @@ program
 
 Promise.resolve()
     .then(() => {
+        const verbose = program.verbose | false;
         if (program.directory) {
-            return calculations.getOvertimeForDirectory(file);
+            return calculations.getOvertimeForDirectory(file, verbose);
         } else if (program.file) {
-            return calculations.getOvertimeForFile(file);
+            return calculations.getOvertimeForFile(file, verbose);
         } else {
             return Promise.reject("no parameters given (use '-h' for more information)");
         }
