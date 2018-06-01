@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/andreasvoigt/timesheet-overtime",
+    "url": "https://github.com/andreasvoigt/timesheet-overtime"
   },
   "engines": {
     "node": ">=8.0.0"
