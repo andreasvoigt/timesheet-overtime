@@ -1,11 +1,9 @@
-"use strict";
+import * as fs from "fs";
+import * as csvParser from "csv-parse";
+import * as moment from "moment";
+import * as path from "path";
 
-const fs = require("fs");
-const csvParser = require("csv-parse");
-const moment = require("moment");
-const path = require("path");
-
-function transformData(data) {
+function transformData(data): Array<any> {
     let transformed = [],
         head = data.shift();
 
@@ -20,28 +18,34 @@ function transformData(data) {
     return transformed;
 }
 
-function aggregateDurationsToDays(data) {
-    let aggregateResult = {};
+interface IAggregatedDurationItem {
+    date: string;
+    dayOfTheWeek: string;
+    duration: moment.Duration;
+    overtime?: moment.Duration;
+}
+
+interface IAggregatedDurations {
+    [date: string]: IAggregatedDurationItem;
+}
+
+function aggregateDurationsToDays(data: Array<any>): IAggregatedDurations {
+    let aggregateResult: IAggregatedDurations = {};
     
     for (let i = 0; i < data.length; i++) {
-        let date = data[i].Datum,
-            item;
+        let date: string = data[i].Datum,
+            item,
+            currentDuration = moment.duration(data[i]["Dauer (rel.)"]);
 
         if (aggregateResult.hasOwnProperty(date)) {
             item = aggregateResult[date];
+            item.duration = currentDuration.add(item.duration);
         } else {
             item = aggregateResult[date] = {
                 date: date,
-                dayOfTheWeek: moment(date).format("d")
+                dayOfTheWeek: moment(date).format("d"),
+                duration: currentDuration
             };
-        }
-
-        let currentDuration = moment.duration(data[i]["Dauer (rel.)"]);
-
-        if (item.duration) {
-            item.duration = currentDuration.add(item.duration);
-        } else {
-            item.duration = currentDuration;
         }
     }
 
@@ -50,9 +54,9 @@ function aggregateDurationsToDays(data) {
 
 const DAY_WORK_TIME = "08:00:00";
 
-function calculateDailyOvertime(aggregatedData) {
-    let workTime = moment.duration(DAY_WORK_TIME),
-        date;
+function calculateDailyOvertime(aggregatedData: IAggregatedDurations): IAggregatedDurations {
+    const workTime = moment.duration(DAY_WORK_TIME);
+    let date;
 
     for (date in aggregatedData) {
         aggregatedData[date].overtime = aggregatedData[date].duration;
@@ -65,7 +69,7 @@ function calculateDailyOvertime(aggregatedData) {
     return aggregatedData;
 }
 
-function calculateTotalOvertime(overtimes) {
+function calculateTotalOvertime(overtimes: IAggregatedDurations): moment.Duration {
     let totalOvertime = moment.duration(0);
 
     for (let date in overtimes) {
@@ -75,7 +79,7 @@ function calculateTotalOvertime(overtimes) {
     return totalOvertime;
 }
 
-function getOvertimeForFile(file, verbose) {
+export function getOvertimeForFile(file, verbose) {
     return new Promise((resolve, reject) => {
         let parser = csvParser({delimiter: ";"}, (err, data) => {
             if (err) {
@@ -96,7 +100,7 @@ function getOvertimeForFile(file, verbose) {
         });
         
         fs.createReadStream(file).pipe(parser);
-    }).then((result) => {
+    }).then((result: moment.Duration) => {
         console.log(`# ${file}`);
         if (verbose) {
             console.log(`  Overtime for this file: ${result.as("minutes")}(min), ${result.as("hours")}(h)`);
@@ -106,7 +110,7 @@ function getOvertimeForFile(file, verbose) {
     });
 }
 
-function getOvertimeForDirectory(directory, verbose) {
+export function getOvertimeForDirectory(directory, verbose) {
     return new Promise((resolve, reject) => {
         let filter = /\.csv$/,
             dir = path.normalize(directory);
@@ -126,7 +130,7 @@ function getOvertimeForDirectory(directory, verbose) {
 
             resolve(filteredFiles);
         });
-    }).then((files) => {
+    }).then((files: Array<string>) => {
         return files.reduce((promise, item) => {
             return promise.then((totalDuration) => {
                 return getOvertimeForFile(item, verbose)
@@ -137,6 +141,3 @@ function getOvertimeForDirectory(directory, verbose) {
         }, Promise.resolve(moment.duration(0)));
     });
 }
-
-module.exports.getOvertimeForDirectory = getOvertimeForDirectory;
-module.exports.getOvertimeForFile = getOvertimeForFile;

@@ -1,13 +1,11 @@
-"use strict";
+import * as program from "commander";
 
-let program = require("commander");
-
-const calculations = require("./overtimeCalculations");
+import * as calculations from "./overtimeCalculations";
 
 let file;
 
 program
-    .version("0.1.0")
+    .version("0.3.0")
     .usage("[options] <file>")
     .option("-d, --directory", "select directory")
     .option("-f, --file", "select file")
@@ -19,7 +17,7 @@ program
 
 Promise.resolve()
     .then(() => {
-        const verbose = program.verbose | false;
+        const verbose = program.verbose || false;
         if (program.directory) {
             return calculations.getOvertimeForDirectory(file, verbose);
         } else if (program.file) {

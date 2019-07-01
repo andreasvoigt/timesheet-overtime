@@ -1,10 +1,12 @@
 {
   "name": "timesheet-overtime",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Process csv files from Timesheet to calculate overtime.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -p ./",
+    "build-watch": "tsc -p ./ -w"
   },
   "author": "Andreas Voigt",
   "license": "MIT",
@@ -22,6 +24,7 @@
   },
   "homepage": "https://github.com/andreasvoigt/timesheet-overtime",
   "devDependencies": {
-    "eslint": "^4.18.1"
+    "@types/node": "^12.0.10",
+    "typescript": "^3.5.2"
   }
 }
