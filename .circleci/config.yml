@@ -1,0 +1,19 @@
+# This config is equivalent to both the '.circleci/extended/orb-free.yml' and the base '.circleci/config.yml'
+version: 2.1
+
+orbs:
+  node: circleci/node@4.1
+
+jobs:
+  build:
+    docker:
+      - image: cimg/node:14.17.4
+    steps:
+      - checkout
+      - run: npm ci
+      - run: npm run build
+
+workflows:
+  build_and_test:
+    jobs:
+      - build
