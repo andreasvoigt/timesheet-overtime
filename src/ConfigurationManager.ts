@@ -1,8 +1,23 @@
 import {parse} from "json5";
 import {readFileSync} from "fs";
 
-interface IConfiguration {
-    dayWorkTime?: string;
+export interface ICustomWorkTime {
+    from: string;
+    to: string;
+    workTimes: {
+        0?: string;
+        1?: string;
+        2?: string;
+        3?: string;
+        4?: string;
+        5?: string;
+        6?: string;
+    }
+}
+
+export interface IConfiguration {
+    dayWorkTime: string;
+    customWorkTimes?: Array<ICustomWorkTime>
 }
 
 export class ConfigurationManager {
@@ -12,7 +27,8 @@ export class ConfigurationManager {
 
     private constructor() {
         this.config = {
-            dayWorkTime: "08:00:00"
+            dayWorkTime: "08:00:00",
+            customWorkTimes: []
         };
     }
 

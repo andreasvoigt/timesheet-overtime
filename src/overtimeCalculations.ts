@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as csvParser from "csv-parse";
 import * as moment from "moment";
 import * as path from "path";
-import {ConfigurationManager} from "./ConfigurationManager";
+import {ConfigurationManager, ICustomWorkTime} from "./ConfigurationManager";
 
 function transformData(data): Array<any> {
     let transformed = [],
@@ -60,12 +60,31 @@ function calculateDailyOvertime(aggregatedData: IAggregatedDurations): IAggregat
     for (date in aggregatedData) {
         aggregatedData[date].overtime = aggregatedData[date].duration;
 
-        if (["0", "6"].indexOf(aggregatedData[date].dayOfTheWeek) === -1) {
-            aggregatedData[date].overtime = aggregatedData[date].overtime.subtract(workTime);
+        const customWorkTimeConfig = findCustomWorkTimeForDate(date);
+
+        if (customWorkTimeConfig) {
+            if (customWorkTimeConfig.workTimes.hasOwnProperty(aggregatedData[date].dayOfTheWeek)) {
+                let specificWorkTime = moment.duration(customWorkTimeConfig.workTimes[aggregatedData[date].dayOfTheWeek]);
+                aggregatedData[date].overtime = aggregatedData[date].overtime.subtract(specificWorkTime);
+            }
+        } else {
+            if (["0", "6"].indexOf(aggregatedData[date].dayOfTheWeek) === -1) {
+                aggregatedData[date].overtime = aggregatedData[date].overtime.subtract(workTime);
+            }
         }
     }
 
     return aggregatedData;
+}
+
+function findCustomWorkTimeForDate(date: string): ICustomWorkTime | undefined {
+    if (!ConfigurationManager.getInstance().get().customWorkTimes) {
+        return undefined;
+    }
+
+    return ConfigurationManager.getInstance().get().customWorkTimes.find((item) => {
+        return (item.from && item.from <= date || !item.from) && (!item.to || item.to && item.to >= date);
+    });
 }
 
 function calculateTotalOvertime(overtimes: IAggregatedDurations): moment.Duration {
