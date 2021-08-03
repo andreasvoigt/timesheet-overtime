@@ -13,6 +13,7 @@
   "dependencies": {
     "commander": "^2.14.1",
     "csv-parse": "^4.4.6",
+    "json5": "2.2.0",
     "moment": "^2.20.1"
   },
   "repository": {

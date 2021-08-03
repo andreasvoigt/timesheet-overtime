@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as csvParser from "csv-parse";
 import * as moment from "moment";
 import * as path from "path";
+import {ConfigurationManager} from "./ConfigurationManager";
 
 function transformData(data): Array<any> {
     let transformed = [],
@@ -52,10 +53,8 @@ function aggregateDurationsToDays(data: Array<any>): IAggregatedDurations {
     return aggregateResult;
 }
 
-const DAY_WORK_TIME = "08:00:00";
-
 function calculateDailyOvertime(aggregatedData: IAggregatedDurations): IAggregatedDurations {
-    const workTime = moment.duration(DAY_WORK_TIME);
+    const workTime = moment.duration(ConfigurationManager.getInstance().get().dayWorkTime);
     let date;
 
     for (date in aggregatedData) {
