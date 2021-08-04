@@ -26,10 +26,7 @@ export class ConfigurationManager {
     private config: IConfiguration;
 
     private constructor() {
-        this.config = {
-            dayWorkTime: "08:00:00",
-            customWorkTimes: []
-        };
+        this.reset();
     }
 
     public static getInstance(): ConfigurationManager {
@@ -47,5 +44,12 @@ export class ConfigurationManager {
 
     public get(): IConfiguration {
         return this.config;
+    }
+
+    public reset() {
+        this.config = {
+            dayWorkTime: "08:00:00",
+            customWorkTimes: []
+        };
     }
 }
