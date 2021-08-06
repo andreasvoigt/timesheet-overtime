@@ -15,10 +15,10 @@
   "author": "Andreas Voigt",
   "license": "MIT",
   "dependencies": {
-    "commander": "^2.14.1",
-    "csv-parse": "^4.4.6",
+    "commander": "2.14.1",
+    "csv-parse": "4.4.6",
     "json5": "2.2.0",
-    "moment": "^2.20.1"
+    "moment": "2.20.1"
   },
   "repository": {
     "type": "git",
@@ -31,7 +31,7 @@
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "1.0.1",
     "@types/jasmine": "3.8.2",
-    "@types/node": "^12.0.10",
+    "@types/node": "12.0.10",
     "jasmine": "3.8.0",
     "jasmine-expect": "5.0.0",
     "nyc": "15.1.0",
