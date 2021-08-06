@@ -4,16 +4,21 @@
   "description": "Process csv files from Timesheet to calculate overtime.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc -p ./",
-    "build-watch": "tsc -p ./ -w"
+    "test": "jasmine",
+    "test-coverage": "nyc --require ts-node/register jasmine",
+    "build": "npm run build-src && npm run build-test",
+    "build-src": "tsc -p ./",
+    "build-src-watch": "tsc -p ./ -w",
+    "build-test": "tsc -p ./spec",
+    "build-test-watch": "tsc -p ./spec -w"
   },
   "author": "Andreas Voigt",
   "license": "MIT",
   "dependencies": {
-    "commander": "^2.14.1",
-    "csv-parse": "^4.4.6",
-    "moment": "^2.20.1"
+    "commander": "2.14.1",
+    "csv-parse": "4.4.6",
+    "json5": "2.2.0",
+    "moment": "2.20.1"
   },
   "repository": {
     "type": "git",
@@ -24,7 +29,14 @@
   },
   "homepage": "https://github.com/andreasvoigt/timesheet-overtime",
   "devDependencies": {
-    "@types/node": "^12.0.10",
+    "@istanbuljs/nyc-config-typescript": "1.0.1",
+    "@types/jasmine": "3.8.2",
+    "@types/node": "12.0.10",
+    "jasmine": "3.8.0",
+    "jasmine-expect": "5.0.0",
+    "nyc": "15.1.0",
+    "source-map-support": "0.5.19",
+    "ts-node": "10.1.0",
     "typescript": "4.3.5"
   }
 }

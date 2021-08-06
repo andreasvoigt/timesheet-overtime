@@ -2,6 +2,11 @@ import * as fs from "fs";
 import * as csvParser from "csv-parse";
 import * as moment from "moment";
 import * as path from "path";
+import {ConfigurationManager, ICustomWorkTime} from "./ConfigurationManager";
+import {promisify} from "util";
+import {pipeline} from "stream";
+
+const pipelinePromised = promisify(pipeline);
 
 function transformData(data): Array<any> {
     let transformed = [],
@@ -52,21 +57,38 @@ function aggregateDurationsToDays(data: Array<any>): IAggregatedDurations {
     return aggregateResult;
 }
 
-const DAY_WORK_TIME = "08:00:00";
-
 function calculateDailyOvertime(aggregatedData: IAggregatedDurations): IAggregatedDurations {
-    const workTime = moment.duration(DAY_WORK_TIME);
+    const workTime = moment.duration(ConfigurationManager.getInstance().get().dayWorkTime);
     let date;
 
     for (date in aggregatedData) {
         aggregatedData[date].overtime = aggregatedData[date].duration;
 
-        if (["0", "6"].indexOf(aggregatedData[date].dayOfTheWeek) === -1) {
-            aggregatedData[date].overtime = aggregatedData[date].overtime.subtract(workTime);
+        const customWorkTimeConfig = findCustomWorkTimeForDate(date);
+
+        if (customWorkTimeConfig) {
+            if (customWorkTimeConfig.workTimes.hasOwnProperty(aggregatedData[date].dayOfTheWeek)) {
+                let specificWorkTime = moment.duration(customWorkTimeConfig.workTimes[aggregatedData[date].dayOfTheWeek]);
+                aggregatedData[date].overtime = aggregatedData[date].overtime.subtract(specificWorkTime);
+            }
+        } else {
+            if (["0", "6"].indexOf(aggregatedData[date].dayOfTheWeek) === -1) {
+                aggregatedData[date].overtime = aggregatedData[date].overtime.subtract(workTime);
+            }
         }
     }
 
     return aggregatedData;
+}
+
+function findCustomWorkTimeForDate(date: string): ICustomWorkTime | undefined {
+    if (!ConfigurationManager.getInstance().get().customWorkTimes) {
+        return undefined;
+    }
+
+    return ConfigurationManager.getInstance().get().customWorkTimes.find((item) => {
+        return (item.from && item.from <= date || !item.from) && (!item.to || item.to && item.to >= date);
+    });
 }
 
 function calculateTotalOvertime(overtimes: IAggregatedDurations): moment.Duration {
@@ -79,35 +101,30 @@ function calculateTotalOvertime(overtimes: IAggregatedDurations): moment.Duratio
     return totalOvertime;
 }
 
-export function getOvertimeForFile(file, verbose) {
-    return new Promise((resolve, reject) => {
-        let parser = csvParser({delimiter: ";"}, (err, data) => {
-            if (err) {
-                return reject(err);
-            }
-        
-            let transformedData = transformData(data),
-                aggregatedData = aggregateDurationsToDays(transformedData),
-                overtimes = calculateDailyOvertime(aggregatedData);
-        
-            //console.log(transformedData);
-            //console.log(aggregatedData);
-            //console.log(overtimes);
-        
-            //console.log(calculateTotalOvertime(overtimes));
+export async function getOvertimeForFile(file, verbose) {
+    let parser = csvParser({delimiter: ";"});
 
-            resolve(calculateTotalOvertime(overtimes));
-        });
-        
-        fs.createReadStream(file).pipe(parser);
-    }).then((result: moment.Duration) => {
-        console.log(`# ${file}`);
-        if (verbose) {
-            console.log(`  Overtime for this file: ${result.as("minutes")}(min), ${result.as("hours")}(h)`);
-        }
+    await pipelinePromised(
+        fs.createReadStream(file),
+        parser
+    );
 
-        return result;
-    });
+    let data = [];
+    for await (const record of parser) {
+        data.push(record);
+    }
+
+    let transformedData = transformData(data),
+        aggregatedData = aggregateDurationsToDays(transformedData),
+        overtimes = calculateDailyOvertime(aggregatedData);
+
+    let result = calculateTotalOvertime(overtimes);
+    console.log(`# ${file}`);
+    if (verbose) {
+        console.log(`  Overtime for this file: ${result.as("minutes")}(min), ${result.as("hours")}(h)`);
+    }
+
+    return result;
 }
 
 export function getOvertimeForDirectory(directory, verbose) {

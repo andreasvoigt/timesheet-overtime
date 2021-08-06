@@ -1,0 +1,12 @@
+{
+  dayWorkTime: "04:00:00",
+  customWorkTimes: [
+    {
+      from: "2021-08-01",
+      to: "2021-08-30",
+      workTimes: {
+        "3": "06:00:00",
+      }
+    }
+  ]
+}

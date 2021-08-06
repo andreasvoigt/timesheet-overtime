@@ -15,11 +15,11 @@ The application has to be build before running it:
 
 The application can be run by:
 
-    node dist/index.js
+    node dist/src/index.js
 
 Call with `-h` to get help for possible parameters:
 
-    node dist/index.js -h
+    node dist/src/index.js -h
 
 This will generate the following output:
 
