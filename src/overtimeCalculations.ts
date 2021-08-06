@@ -3,6 +3,10 @@ import * as csvParser from "csv-parse";
 import * as moment from "moment";
 import * as path from "path";
 import {ConfigurationManager, ICustomWorkTime} from "./ConfigurationManager";
+import {promisify} from "util";
+import {pipeline} from "stream";
+
+const pipelinePromised = promisify(pipeline);
 
 function transformData(data): Array<any> {
     let transformed = [],
@@ -97,35 +101,30 @@ function calculateTotalOvertime(overtimes: IAggregatedDurations): moment.Duratio
     return totalOvertime;
 }
 
-export function getOvertimeForFile(file, verbose) {
-    return new Promise((resolve, reject) => {
-        let parser = csvParser({delimiter: ";"}, (err, data) => {
-            if (err) {
-                return reject(err);
-            }
-        
-            let transformedData = transformData(data),
-                aggregatedData = aggregateDurationsToDays(transformedData),
-                overtimes = calculateDailyOvertime(aggregatedData);
-        
-            //console.log(transformedData);
-            //console.log(aggregatedData);
-            //console.log(overtimes);
-        
-            //console.log(calculateTotalOvertime(overtimes));
+export async function getOvertimeForFile(file, verbose) {
+    let parser = csvParser({delimiter: ";"});
 
-            resolve(calculateTotalOvertime(overtimes));
-        });
-        
-        fs.createReadStream(file).pipe(parser);
-    }).then((result: moment.Duration) => {
-        console.log(`# ${file}`);
-        if (verbose) {
-            console.log(`  Overtime for this file: ${result.as("minutes")}(min), ${result.as("hours")}(h)`);
-        }
+    await pipelinePromised(
+        fs.createReadStream(file),
+        parser
+    );
 
-        return result;
-    });
+    let data = [];
+    for await (const record of parser) {
+        data.push(record);
+    }
+
+    let transformedData = transformData(data),
+        aggregatedData = aggregateDurationsToDays(transformedData),
+        overtimes = calculateDailyOvertime(aggregatedData);
+
+    let result = calculateTotalOvertime(overtimes);
+    console.log(`# ${file}`);
+    if (verbose) {
+        console.log(`  Overtime for this file: ${result.as("minutes")}(min), ${result.as("hours")}(h)`);
+    }
+
+    return result;
 }
 
 export function getOvertimeForDirectory(directory, verbose) {
