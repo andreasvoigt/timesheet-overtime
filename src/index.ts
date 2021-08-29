@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import * as calculations from "./overtimeCalculations";
 import {ConfigurationManager} from "./ConfigurationManager";
 import {Command} from "commander";
