@@ -1,0 +1,5 @@
+/.*
+/coverage
+spec
+/src
+/tsconfig.json
