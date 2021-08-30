@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig",
+  "include": ["./*.ts"],
+  "compilerOptions": {
+    "outDir": "../dist",
+    "rootDir": "../",
+    "types" : [
+      "jasmine", "node", "jasmine-expect"
+    ],
+    "target": "esnext"
+  }
+}

@@ -2,10 +2,11 @@
     "compilerOptions": {
         "module": "commonjs",
         "sourceMap": true,
-        "outDir": "dist",
+        "outDir": "./dist",
         "lib": ["esnext", "dom", "scripthost"],
         "target": "es2017",
-        "alwaysStrict": true
+        "alwaysStrict": true,
+        "rootDir": "."
     },
     "exclude": [
         "node_modules"
