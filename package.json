@@ -1,8 +1,9 @@
 {
   "name": "timesheet-overtime",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Process csv files from Timesheet to calculate overtime.",
   "main": "index.js",
+  "bin": "./dist/src/index.js",
   "scripts": {
     "test": "jasmine",
     "test-coverage": "nyc --require ts-node/register jasmine",
