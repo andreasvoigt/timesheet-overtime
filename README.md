@@ -21,6 +21,32 @@ or
 
 for Windows.
 
+## Configuration
+
+The overtime calculation uses 8h workdays with a 5 workday (MO - FR) week as default configuration.
+If you want to use custom configuration you can supply a <config>.json5 file using the `--config` parameter.
+
+<pre>
+{
+  dayWorkTime: "08:00:00", // standard working time defined via HH:MM:SS
+  customWorkTimes: [ // optional array of custom working time definitions
+    {
+      from: "YYYY-MM-DD", // supply at least 'from' or 'to'
+      to: "YYYY-MM-DD",
+
+      // a list of custom working time definitions:
+      workTimes: {
+        // "day": "custom-working-time as HH:MM:SS"
+        // Define the day property as stringified number form 0 (sunday) to 6 (saturday)
+        "3": "08:00:00",
+        "4": "08:00:00",
+        "5": "04:00:00"
+      }
+    }
+  ]
+}
+</pre>
+
 ## Build
 
 The application has to be build before running it:
