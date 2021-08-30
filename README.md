@@ -5,6 +5,22 @@ It will parse csv export files and calculate overtime work based on 8 h daily wo
 
 [![CircleCI](https://circleci.com/gh/andreasvoigt/timesheet-overtime/tree/develop.svg?style=svg)](https://circleci.com/gh/andreasvoigt/timesheet-overtime/tree/develop)
 
+## Installation and Execution
+
+The program can be installed via
+
+    npm i -g andreasvoigt/timesheet-overtime
+
+Afterwards it can be run by
+
+    timesheet-overtime -h
+
+or 
+
+    timesheet-overtime.cmd -h
+
+for Windows.
+
 ## Build
 
 The application has to be build before running it:
