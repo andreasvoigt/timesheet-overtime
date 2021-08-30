@@ -9,7 +9,7 @@ It will parse csv export files and calculate overtime work based on 8 h daily wo
 
 The program can be installed via
 
-    npm i -g andreasvoigt/timesheet-overtime
+    npm i -g timesheet-overtime
 
 Afterwards it can be run by
 

@@ -39,7 +39,7 @@ async function main(path, command: Commands) {
 const program = new Command();
 
 program
-    .version("0.4.0")
+    .version("0.4.1")
     .option("--config <config>", "use custom config instead to overwrite default values")
     .option("--verbose", "print detailed information for each file");
 
