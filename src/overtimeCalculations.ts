@@ -1,10 +1,10 @@
 import * as fs from "fs";
-import * as csvParser from "csv-parse";
 import * as moment from "moment";
 import * as path from "path";
 import {ConfigurationManager, ICustomWorkTime} from "./ConfigurationManager";
 import {promisify} from "util";
 import {pipeline} from "stream";
+import {parse} from "csv-parse";
 
 const pipelinePromised = promisify(pipeline);
 
@@ -102,7 +102,7 @@ function calculateTotalOvertime(overtimes: IAggregatedDurations): moment.Duratio
 }
 
 export async function getOvertimeForFile(file, verbose) {
-    let parser = csvParser({delimiter: ";"});
+    let parser = parse({delimiter: ";"});
 
     await pipelinePromised(
         fs.createReadStream(file),
