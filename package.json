@@ -16,7 +16,7 @@
   "author": "Andreas Voigt",
   "license": "MIT",
   "dependencies": {
-    "commander": "8.3.0",
+    "commander": "9.0.0",
     "csv-parse": "5.0.4",
     "json5": "2.2.0",
     "moment": "2.29.1"
