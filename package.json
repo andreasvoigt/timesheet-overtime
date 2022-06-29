@@ -17,7 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "commander": "8.3.0",
-    "csv-parse": "5.2.0",
+    "csv-parse": "5.2.1",
     "json5": "2.2.1",
     "moment": "2.29.3"
   },
