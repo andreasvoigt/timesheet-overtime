@@ -19,7 +19,7 @@
     "commander": "8.3.0",
     "csv-parse": "5.2.2",
     "json5": "2.2.1",
-    "moment": "2.29.3"
+    "moment": "2.29.4"
   },
   "repository": {
     "type": "git",
