@@ -31,9 +31,9 @@
   "homepage": "https://github.com/andreasvoigt/timesheet-overtime",
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "1.0.2",
-    "@types/jasmine": "4.0.3",
+    "@types/jasmine": "4.3.0",
     "@types/node": "16.11.45",
-    "jasmine": "4.2.1",
+    "jasmine": "4.4.0",
     "jasmine-expect": "5.0.0",
     "nyc": "15.1.0",
     "source-map-support": "0.5.21",
