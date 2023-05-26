@@ -32,7 +32,7 @@
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "1.0.2",
     "@types/jasmine": "4.3.1",
-    "@types/node": "16.18.11",
+    "@types/node": "16.18.33",
     "jasmine": "5.0.0",
     "jasmine-expect": "5.0.0",
     "nyc": "15.1.0",
